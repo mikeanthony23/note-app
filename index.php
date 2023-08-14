@@ -12,6 +12,37 @@
 
 <body>
 
+  <?php 
+
+  define('DB_HOST', 'localhost');
+  define('DB_USER', 'noteapp');
+  define('DB_PASS', '');
+  define('DB_NAME', 'note_app');
+
+  // create connection
+  $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+  // check connection
+  if($conn->connect_error) {
+  die('Connection Error' . $conn->connect_error );
+  }
+
+  // echo '<h1> CONNECTED!! </h1>'; 
+
+  $sql = 'SELECT * FROM notes';
+  $result = mysqli_query($conn, $sql);
+  $notes = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+  php_logger(array_map(null,$notes));
+
+   function php_logger($data) {
+    $output = json_encode($data);
+    echo "<script>console.log('{$output}' );</script>";
+}
+
+
+ ?>
+
   <header class="header">
     <div class="header__wrapper wrapper">
       <h1 class="header__title">Note List</h1>
@@ -21,104 +52,53 @@
     <div class="menu_wrapper wrapper">
       <button class="menu_add_btn btn">ADD A NOTE</button>
       <ul class="menu__list">
+        <?php foreach ($notes as $item):?>
         <li class="menu__list_item">
-          <a class="menu__list_title" href="javascript:;">HTML</a>
+          <a class="menu__list_title" href="javascript:;" data-id="<?php echo $item['id'] ?>">
+            <?php echo $item['title'] ?> </a>
           <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li>
-              <button class="menu__add_sub_category_btn btn">Add Category</button>
-            </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Section</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Forms</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Imgs with Section</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
         </li>
-        <li class="menu__list_item"> <a class="menu__list_title" href="javascript:;">CSS</a>
-          <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Section</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Forms</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Imgs with Section</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
-        </li>
-        <li class="menu__list_item"> <a class="menu__list_title" href="javascript:;">JS</a>
-          <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Moving Animations</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Parallax</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Sitck on to top</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
-        </li>
-        <li class="menu__list_item">
-          <a class="menu__list_title" href="javascript:;">SHORT CODES</a>
-          <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Moving Animations</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Parallax</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Sitck on to top</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
-        </li>
-        <li class="menu__list_item"> <a class="menu__list_title" href="javascript:;">WIDGETS</a>
-          <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Header Info</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Bottom Boxes</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Information</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
-        </li>
-        <li class="menu__list_item">
-          <a class="menu__list_title" href="javascript:;">WEBSITES</a>
-          <button class="menu__delete_btn_main_category delete_btn"></button>
-          <ul class="menu__sub_list hidden">
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Parallax</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Fixed Nav</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-            <li class="menu__sub_list_item"> <a href="javascript:;"> Scroll animations</a> <button
-                class="menu__delete_btn delete_btn"></button> </li>
-          </ul>
-        </li>
+        <?php endforeach; ?>
       </ul>
     </div>
   </aside>
   <main class="content">
     <div class="content__form_area hidden">
-      <form class="content__form" action="">
+      <form class="content__form" method="POST">
         <button type="button" class="content__form_close_btn">&times;</button>
-        <input class="content__form_title content__form_fields" type="text" name="" placeholder="title..." id="">
-        <textarea class="content__form_info content__form_fields" name="" id="" placeholder="content..."></textarea>
+        <input class="content__form_title content__form_fields" type="text" name="title" placeholder="title...">
+        <textarea class="content__form_info content__form_fields" name="content" placeholder="content..."></textarea>
         <button class="content__form_btn btn">Submit</button>
       </form>
+
     </div>
-    <div class="content__wrapper wrapper">
-      <h2 class="content__title">Note Title</h2>
+    <h1>
+      <?php if(!empty($_POST["title"]) && !empty($_POST["content"])) {
+      $title = $_POST["title"];
+      $content = $_POST["content"];
+      $sql = "INSERT INTO notes (title, content) VALUES ('$title','$content');";
+      mysqli_query($conn, $sql);
+      mysqli_close($conn);
+      echo "<script>
+      if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+      }
+      window.location = window.location.href;</script>";
+      }?>
+
+    </h1>
+    <?php foreach ($notes as $item):?>
+    <div class="content__wrapper wrapper hidden" data-id="<?php echo $item['id'] ?>">
+      <h2 class="content__title">
+        <?php echo $item['title'] ?>
+      </h2>
       <div class="content__container">
         <p class="content__info">
-          NOTE CONTENT
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Pariatur eius fuga, fugit similique excepturi
-          voluptates delectus laboriosam, animi quae ullam sit ea molestiae assumenda officiis, minus dolorem. Natus
-          placeat,
-          autem in amet quasi quod sed illum asperiores soluta error recusandae consequatur voluptatum saepe ut
-          distinctio
-          cumque eius deleniti. Quo, ab?
+          <?php echo $item['content'] ?>
         </p>
       </div>
     </div>
+    <?php endforeach; ?>
   </main>
   <footer class="footer">
     <div class="footer_wrapper wrapper">
