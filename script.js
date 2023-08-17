@@ -51,13 +51,11 @@ const toggleNoteList = function (e) {
   if (!target) return;
   const targetParentEl = target.parentElement;
   const currentId = target.dataset.id;
-  console.log(currentId);
   if (targetParentEl.classList.contains("open")) {
     return () => {
       targetParentEl.classList.remove("open");
     };
   }
-  console.log({ target, targetParentEl });
   removeClasses(menuListItems, "open");
   addClasses(contentWrappers, "hidden");
   removeClass(document.querySelector(`.content__wrapper[data-id="${currentId}"]`), "hidden");
@@ -75,3 +73,25 @@ const showAddForm = function () {
 menuList.addEventListener("click", throttle(toggleNoteList, 200));
 addNoteBtn.addEventListener("click", showAddForm);
 closeAddFormBtn.addEventListener("click", closeAddForm);
+
+const contentFormBtnContainer = document.querySelector(".content__form-btn-container");
+
+document.querySelector(".menu_add_btn").addEventListener("click", function () {
+  contentFormBtnContainer.innerHTML = "";
+  contentFormBtnContainer.insertAdjacentHTML(
+    "beforeend",
+    `<button class="content__form_btn btn" name="submit" >Submit</button>`
+  );
+});
+
+document.querySelector(".content__wrapper").addEventListener("click", function (e) {
+  const target = e.target.closest(".content__update-btn");
+  if (!target) return;
+  console.log(target);
+  contentFormBtnContainer.innerHTML = "";
+  contentFormBtnContainer.insertAdjacentHTML(
+    "beforeend",
+    `<button class="content__form_btn btn" name="update" value="${this.dataset.id}" >Submit</button>`
+  );
+  showAddForm();
+});

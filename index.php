@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Note App</title>
   <link rel="stylesheet" href="style.min.css">
-  <script defer src="script.js"></script>
+  <script defer src="script.min.js"></script>
 
 </head>
 
@@ -37,13 +37,16 @@
       </ul>
     </div>
   </aside>
-  <main class=" content">
+  <main class="content">
     <div class="content__form_area hidden">
       <form class="content__form" method="POST">
         <button type="button" class="content__form_close_btn">&times;</button>
         <input class="content__form_title content__form_fields" type="text" name="title" placeholder="title...">
         <textarea class="content__form_info content__form_fields" name="content" placeholder="content..."></textarea>
-        <button class="content__form_btn btn" name="submit" value="<?php print_r($notes); ?>">Submit</button>
+        <div class="content__form-btn-container">
+
+        </div>
+        <!-- <button class="content__form_btn btn" name="submit" value="">Submit</button> -->
       </form>
 
     </div>
@@ -55,13 +58,10 @@
       if(isset($_POST['submit'])){
       $sql = "INSERT INTO notes (title, content) VALUES ('$title','$content');";
     } else {
-      $sql = "UPDATE notes 
-      SET title = $title ,
-      content = $content
-      WHERE $id = ;";
+      $IDtoUpdate = $_POST['update'];
+      echo $IDtoUpdate;
+      $sql = "UPDATE notes SET title = '$title', content = '$content' WHERE id = $IDtoUpdate;";
     }
-
-
       mysqli_query($conn, $sql);
       mysqli_close($conn);
       echo "<script>
@@ -86,7 +86,7 @@
           <?php echo $item['content'] ?>
         </p>
       </div>
-      <button class="content__update-btn btn">Update</button>
+      <button class="content__update-btn btn" data-id="<?php echo $item['id'] ?>">Update</button>
     </div>
     <?php endforeach; ?>
   </main>
