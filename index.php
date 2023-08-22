@@ -22,6 +22,7 @@
       <h1 class="header__title">Notes List</h1>
     </div>
   </header>
+
   <aside class="menu">
     <div class="menu_wrapper wrapper">
       <button class="menu_add_btn btn">ADD A NOTE
@@ -37,44 +38,39 @@
       </ul>
     </div>
   </aside>
+
   <main class="content">
     <div class="content__form_area hidden">
       <form class="content__form" method="POST">
         <button type="button" class="content__form_close_btn">&times;</button>
         <input class="content__form_title content__form_fields" type="text" name="title" placeholder="title...">
         <textarea class="content__form_info content__form_fields" name="content" placeholder="content..."></textarea>
-        <div class="content__form-btn-container">
-
-        </div>
-        <!-- <button class="content__form_btn btn" name="submit" value="">Submit</button> -->
+        <button class="content__form_btn btn" name="submit">Submit</button>
       </form>
-
     </div>
-    <?php if(!empty($_POST["title"]) && !empty($_POST["content"])) {
+    <?php 
+
+    
+    if((!empty($_POST["title"]) && !empty($_POST["content"])) && isset($_POST['submit'])) {
 
       $title = $_POST["title"];
       $content = $_POST["content"];
 
-      if(isset($_POST['submit'])){
       $sql = "INSERT INTO notes (title, content) VALUES ('$title','$content');";
-    } else {
-      $IDtoUpdate = $_POST['update'];
-      echo $IDtoUpdate;
-      $sql = "UPDATE notes SET title = '$title', content = '$content' WHERE id = $IDtoUpdate;";
-    }
+
       mysqli_query($conn, $sql);
-      mysqli_close($conn);
       echo "<script>
       if ( window.history.replaceState ) {
       window.history.replaceState( null, null, window.location.href );
     }
     window.location = window.location.href;</script>";
-  }?>
+    } 
+    
+    
 
-    <?php
 
-
-?>
+  
+  ?>
 
     <?php foreach ($notes as $item):?>
     <div class="content__wrapper wrapper hidden" data-id="<?php echo $item['id'] ?>">
@@ -87,9 +83,26 @@
         </p>
       </div>
       <button class="content__update-btn btn" data-id="<?php echo $item['id'] ?>">Update</button>
+      <div
+        class="content__form_area content__form_area-update content__form_area-update--<?php echo $item['id'] ?> hidden">
+        <form class="content__form content__form-update" action="update.php" method="GET">
+          <button type="button" class="content__form_close_btn content__form_close_btn--update"
+            data-id="<?php echo $item['id'] ?>">&times;</button>
+          <input class="content__form_title content__form_fields" type="text" name="updatedTitle"
+            placeholder="title...">
+          <textarea class="content__form_info content__form_fields" name="updatedContent"
+            placeholder="content..."></textarea>
+          <button class="content__form_btn content__form_btn--update btn" data-id="<?php echo $item['id'];?>"
+            value="<?php echo $item['id'];?>" name="id">Update</button>
+        </form>
+      </div>
     </div>
+
     <?php endforeach; ?>
+
+
   </main>
+
   <footer class="footer">
     <div class="footer_wrapper wrapper">
       <p class="footer_copyright_text"> Copyright 2023 - DHB</p>

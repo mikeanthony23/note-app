@@ -6,8 +6,13 @@ const menuSubLists = [...document.querySelectorAll(".menu__sub_list")];
 const menuListItems = [...document.querySelectorAll(".menu__list_item")];
 const addNoteBtn = document.querySelector(".menu_add_btn");
 const addNoteForm = document.querySelector(".content__form_area");
-const closeAddFormBtn = document.querySelector(".content__form_close_btn");
+const contentFormAreas = [...document.querySelectorAll(".content__form_area")];
+const closeAddFormBtns = [...document.querySelectorAll(".content__form_close_btn")];
+const formContentArea = document.querySelector(".content");
 const contentWrappers = [...document.querySelectorAll(".content__wrapper")];
+const contentAreaUpdateForms = [...document.querySelectorAll(".content__form_area-update")];
+
+const updateNoteBtn = document.querySelector(".content__update-btn");
 
 const removeClasses = function (classLists, classToRemove) {
   classLists.forEach((e) => {
@@ -15,8 +20,8 @@ const removeClasses = function (classLists, classToRemove) {
   });
 };
 
-const addClass = function (targetElement, classToAdd) {
-  targetElement.classList.add(classToAdd);
+const removeClass = function (targetElement, classToAdd) {
+  targetElement.classList.remove(classToAdd);
 };
 
 const addClasses = function (targetElements, classToAdd) {
@@ -25,8 +30,8 @@ const addClasses = function (targetElements, classToAdd) {
   });
 };
 
-const removeClass = function (targetElement, classToAdd) {
-  targetElement.classList.remove(classToAdd);
+const addClass = function (targetElement, classToAdd) {
+  targetElement.classList.add(classToAdd);
 };
 
 function throttle(cb, delay) {
@@ -62,36 +67,35 @@ const toggleNoteList = function (e) {
   targetParentEl.classList.toggle("open");
 };
 
-const closeAddForm = function () {
-  addNoteForm.classList.add("hidden");
+const closePopUpForm = function (e) {
+  //// TODO CLOSE UPDATE FORM
+  const target = e.target.closest(".content__form_close_btn");
+  if (!target) return;
+  removeClasses(contentFormAreas, "hidden");
+  addClasses(contentFormAreas, "hidden");
 };
 
-const showAddForm = function () {
+const openPopUpForm = function () {
   addNoteForm.classList.remove("hidden");
 };
 
+// show note contents
 menuList.addEventListener("click", throttle(toggleNoteList, 200));
-addNoteBtn.addEventListener("click", showAddForm);
-closeAddFormBtn.addEventListener("click", closeAddForm);
 
-const contentFormBtnContainer = document.querySelector(".content__form-btn-container");
+// add a note
+addNoteBtn.addEventListener("click", openPopUpForm);
 
-document.querySelector(".menu_add_btn").addEventListener("click", function () {
-  contentFormBtnContainer.innerHTML = "";
-  contentFormBtnContainer.insertAdjacentHTML(
-    "beforeend",
-    `<button class="content__form_btn btn" name="submit" >Submit</button>`
-  );
-});
+// close pop up form
+formContentArea.addEventListener("click", closePopUpForm);
 
-document.querySelector(".content__wrapper").addEventListener("click", function (e) {
-  const target = e.target.closest(".content__update-btn");
-  if (!target) return;
-  console.log(target);
-  contentFormBtnContainer.innerHTML = "";
-  contentFormBtnContainer.insertAdjacentHTML(
-    "beforeend",
-    `<button class="content__form_btn btn" name="update" value="${this.dataset.id}" >Submit</button>`
-  );
-  showAddForm();
-});
+(function () {
+  if (contentWrappers.length <= 0) return;
+  formContentArea.addEventListener("click", (e) => {
+    const targetBtn = e.target.closest(".content__update-btn");
+    if (!targetBtn) return;
+    const id = targetBtn.dataset.id;
+    const targetFormArea = document.querySelector(`.content__form_area-update--${id}`);
+    addClasses(contentAreaUpdateForms, "hidden");
+    removeClass(targetFormArea, "hidden");
+  });
+})();
